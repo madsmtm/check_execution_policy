@@ -9,6 +9,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - run: spctl --status
+
+      - run: csrutil status
+
+      - run: DevToolsSecurity --status
+
       - run: cargo build --bin dummy
       - run: cargo build
 
