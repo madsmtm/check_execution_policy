@@ -8,4 +8,16 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - run: cargo run
+
+      - run: cargo build --bin dummy
+      - run: cargo build
+
+      - name: First run of dummy
+        run: time target/debug/dummy
+      - name: Second run of dummy
+        run: time target/debug/dummy
+
+      - name: First run of check_execution_policy
+        run: time target/debug/check_execution_policy
+      - name: Second run of check_execution_policy
+        run: time target/debug/check_execution_policy
