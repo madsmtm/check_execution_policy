@@ -1,0 +1,11 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  run:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo run
