@@ -66,6 +66,13 @@ impl ExecutionPolicyHandle {
             EPDeveloperToolStatus(status)
         })
     }
+
+    // `requestDeveloperToolAccessWithCompletionHandler` might be useful at
+    // some point, to allow the user to more easily see which application
+    // needs to be allowed.
+    //
+    // addPolicyExceptionForURL:error: probably isn't relevant, that is more
+    // used for e.g. allowing running a recently downloaded application.
 }
 
 impl Drop for ExecutionPolicyHandle {

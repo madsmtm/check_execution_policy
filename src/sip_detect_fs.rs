@@ -56,6 +56,8 @@ pub fn from_system_lib() -> Option<bool> {
 }
 
 /// Alternative implementation: Invoke `csrutil status`, and parse the output.
+///
+/// Might fail if a weird PATH is set. Maybe should use `/usr/bin/csrutil`?
 pub fn from_command() -> Option<bool> {
     let res = Command::new("csrutil")
         .arg("status")
