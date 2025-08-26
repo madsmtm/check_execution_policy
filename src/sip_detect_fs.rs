@@ -1,6 +1,7 @@
 //! Utilities to detect whether SIP Filesystem Protections are enabled.
 
 use std::ffi::{CStr, c_int, c_void};
+use std::io::{Error, ErrorKind};
 use std::process::Command;
 
 /// Fastest (?) and maybe most robust implementation (?): Look up the private
@@ -82,5 +83,22 @@ pub fn from_command() -> Option<bool> {
     } else {
         tracing::warn!(?res, "could not part `csrutil status` output");
         None
+    }
+}
+
+/// Hacky way: Query the file system for write access to `/System`.
+pub fn from_fs_operation() -> Option<bool> {
+    let res = unsafe { libc::access(c"/System".as_ptr(), libc::W_OK) };
+    if res == 0 {
+        Some(false)
+    } else {
+        let err = Error::last_os_error();
+        if err.kind() == ErrorKind::PermissionDenied {
+            Some(true)
+        } else if err.kind() == ErrorKind::ReadOnlyFilesystem {
+            Some(false)
+        } else {
+            None
+        }
     }
 }

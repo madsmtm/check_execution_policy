@@ -13,9 +13,10 @@ fn main() {
 
     // If disabled, we don't actually care about the execution policy.
     println!(
-        "SIP Filesystem Protections status: {:?}, {:?}",
+        "SIP Filesystem Protections status: {:?}, {:?}, {:?}",
         sip_detect_fs::from_command(),
-        sip_detect_fs::from_system_lib()
+        sip_detect_fs::from_system_lib(),
+        sip_detect_fs::from_fs_operation(),
     );
 
     if let Some(handle) = ExecutionPolicyHandle::open() {
