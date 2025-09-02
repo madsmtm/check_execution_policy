@@ -1,4 +1,5 @@
-//! Utilities to detect whether SIP Filesystem Protections are enabled.
+//! Utilities to detect whether System Integrity Protection's Filesystem
+//! Protections are enabled.
 
 use std::ffi::{CStr, c_int, c_void};
 use std::io::{Error, ErrorKind};
