@@ -58,18 +58,19 @@ pub fn from_system_lib() -> Option<bool> {
 
 /// Alternative implementation: Invoke `csrutil status`, and parse the output.
 ///
-/// Might fail if a weird PATH is set. Maybe should use `/usr/bin/csrutil`?
+/// Might fail if the output changes in the future.
 pub fn from_command() -> Option<bool> {
-    let res = Command::new("csrutil")
+    // Invoke directly, to avoid issues if a weird PATH is set.
+    let res = Command::new("/usr/bin/csrutil")
         .arg("status")
         .output()
         .inspect_err(|err| {
-            tracing::error!(?err, "failed invoking `csrutil status`");
+            tracing::error!(?err, "failed invoking `/usr/bin/csrutil status`");
         })
         .ok()?;
 
     if !res.status.success() {
-        tracing::error!(?res, "`csrutil status` failed");
+        tracing::error!(?res, "`/usr/bin/csrutil status` failed");
         return None;
     }
 
@@ -84,7 +85,7 @@ pub fn from_command() -> Option<bool> {
     {
         Some(false)
     } else {
-        tracing::warn!(?res, "could not part `csrutil status` output");
+        tracing::warn!(?res, "could not parse output of `/usr/bin/csrutil status`");
         None
     }
 }
