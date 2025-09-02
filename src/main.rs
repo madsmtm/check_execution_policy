@@ -6,7 +6,7 @@
 mod execution_policy_dynamic;
 mod sip_detect_fs;
 
-use execution_policy_dynamic::{EPDeveloperToolStatus, ExecutionPolicyHandle};
+use execution_policy_dynamic::{EPDeveloperTool, EPDeveloperToolStatus, ExecutionPolicyHandle};
 
 fn main() {
     tracing_subscriber::fmt::init();
@@ -19,17 +19,26 @@ fn main() {
         sip_detect_fs::from_fs_operation(),
     );
 
-    if let Some(handle) = ExecutionPolicyHandle::open() {
-        let status = handle.check_status();
-        let status = match status {
-            EPDeveloperToolStatus::NOT_DETERMINED => "not determined",
-            EPDeveloperToolStatus::RESTRICTED => "restricted",
-            EPDeveloperToolStatus::DENIED => "denied",
-            EPDeveloperToolStatus::AUTHORIZED => "authorized",
-            _ => "unknown",
-        };
-        println!("Execution policy status: {status}");
-    } else {
+    let Some(handle) = ExecutionPolicyHandle::open() else {
         println!("ExecutionPolicy framework not available");
-    }
+        return;
+    };
+
+    let Some(developer_tool) = EPDeveloperTool::new(&handle) else {
+        println!("Failed initializing EPDeveloperTool");
+        return;
+    };
+
+    let status = developer_tool.authorization_status();
+    let status_str = match status {
+        EPDeveloperToolStatus::NOT_DETERMINED => "not determined",
+        EPDeveloperToolStatus::RESTRICTED => "restricted",
+        EPDeveloperToolStatus::DENIED => "denied",
+        EPDeveloperToolStatus::AUTHORIZED => "authorized",
+        _ => "unknown",
+    };
+    println!("Execution policy status: {status_str}");
+
+    let res = developer_tool.request_access();
+    println!("Requested access, result: {res}");
 }

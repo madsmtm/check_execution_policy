@@ -13,8 +13,9 @@ pub fn from_system_lib() -> Option<bool> {
 
     impl Drop for LibSystemHandle {
         fn drop(&mut self) {
-            // Ignore errors when closing
             let _ = unsafe { libc::dlclose(self.0) };
+            // Ignore errors when closing. This is also what `libloading` does:
+            // https://docs.rs/libloading/0.8.6/src/libloading/os/unix/mod.rs.html#374
         }
     }
 
